@@ -1,28 +1,46 @@
 import rasterio
-from rasterio.plot import show
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Path to your downloaded TIF file
-file_path = "D:\\Lake encroachment\\bellandur_lake_2024.tif"
+file_paths = [
+    r"D:\\Lake encroachment\\tif_files\\2024\\bellandur_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\sambhar_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\pulicat_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\dal_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\chilika_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\vembanad_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\loktak_lake_2024.tif",
+    r"D:\\Lake encroachment\\tif_files\\2024\\hussain_sagar_2024.tif"
+]
 
-with rasterio.open(file_path) as src:
-    # Read the data (Bands 1, 2, and 3 which correspond to Red, Green, Blue)
-    # The data comes in as a NumPy array
-    image_array = src.read([1, 2, 3])
-    
-    # Sentinel-2 data is often stored as raw integers (0-10000)
-    # We normalize it to a 0-1 range for matplotlib to display it beautifully
-    image_array = image_array / 10000.0
-    
-    # Clip any bright outliers to keep the image from looking washed out
-    image_array = np.clip(image_array, 0, 0.3) / 0.3 
+# Create grid
+rows = 3
+cols = 3
+fig, axes = plt.subplots(rows, cols, figsize=(15, 15))
 
-    # Plot the image
-    fig, ax = plt.subplots(figsize=(10, 10))
-    # rasterio's show() handles the coordinate mapping
-    show(image_array, transform=src.transform, ax=ax)
+axes = axes.flatten()  # Convert 2D array of axes to 1D for easy indexing
+
+for i, file_path in enumerate(file_paths):
     
-    plt.title('Hussain Sagar Lake - 2024')
-    plt.axis('off') # Hides the coordinate axes for a cleaner look
-    plt.show()
+    with rasterio.open(file_path) as src:
+        image_array = src.read([1, 2, 3])
+        
+        # Normalize Sentinel-2 values
+        image_array = image_array / 10000.0
+        image_array = np.clip(image_array, 0, 0.3) / 0.3
+        
+        # Rearrange from (bands, height, width) → (height, width, bands)
+        image_array = np.transpose(image_array, (1, 2, 0))
+        
+        axes[i].imshow(image_array)
+        
+        lake_name = file_path.split("\\")[-1].split("_")[0]
+        axes[i].set_title(f"{lake_name.capitalize()} - 2024")
+        axes[i].axis("off")
+
+# Hide unused subplots (since 9 spaces but 7 images)
+for j in range(len(file_paths), rows * cols):
+    axes[j].axis("off")
+
+plt.tight_layout()
+plt.show()

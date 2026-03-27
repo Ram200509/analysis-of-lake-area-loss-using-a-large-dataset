@@ -1,53 +1,46 @@
 import ee
 
-ee.Authenticate()
+ee.Authenticate()      # Run only once
 ee.Initialize(project="lake-encroachment-analysis")
 
-# Bellandur Lake bounding box [Min Longitude, Min Latitude, Max Longitude, Max Latitude]
-region = ee.Geometry.Rectangle([77.635, 12.915, 77.685, 12.950])
+# ==================== LIST OF LAKES ====================
+lakes = {
+    "Bellandur":        [77.635, 12.915, 77.685, 12.950],   
+    "Sambhar":          [74.95,  26.85,  75.30,  27.10],    
+    "Pulicat":          [80.15,  13.40,  80.35,  13.70],    
+    "Dal":              [74.80,  34.05,  74.90,  34.15],    
+    "Chilika":          [85.00,  19.60,  85.40,  19.85],    
+    "Vembanad":         [76.35,  9.40,   76.55,  9.70],     
+    "Loktak":           [93.75,  24.40,  93.95,  24.60]   
+}
 
-# ==========================================
-# 2018 IMAGE (Older Baseline)
-# ==========================================
-collection_old = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
-    .filterBounds(region) \
-    .filterDate('2018-01-01', '2018-12-31') \
-    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
-    .select(['B8', 'B4', 'B3', 'B2']) # <-- Notice B8 (Near-Infrared) is now included
+years = [2018, 2024]
 
-image_old = collection_old.median()
+print("Starting export for multiple lakes...\n")
 
-task_old = ee.batch.Export.image.toDrive(
-    image=image_old,
-    description='bellandur_lake_2018',
-    folder='bellandur_data',
-    scale=10,
-    region=region,
-    maxPixels=1e8
-)
-task_old.start()
-print("Exporting 2018 Bellandur image...")
+for lake_name, bbox in lakes.items():
+    region = ee.Geometry.Rectangle(bbox)
+    
+    for year in years:
+        collection = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
+            .filterBounds(region) \
+            .filterDate(f'{year}-01-01', f'{year}-12-31') \
+            .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
+            .select(['B8', 'B4', 'B3', 'B2'])
 
-# ==========================================
-# 2024 IMAGE (Recent Baseline)
-# ==========================================
-collection_new = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
-    .filterBounds(region) \
-    .filterDate('2024-01-01', '2024-12-31') \
-    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) \
-    .select(['B8', 'B4', 'B3', 'B2']) # <-- B8 included here too
+        image = collection.median()
 
-image_new = collection_new.median()
+        task = ee.batch.Export.image.toDrive(
+            image=image,
+            description=f'{lake_name.lower()}_lake_{year}',
+            folder='multi_lake_data',
+            scale=10,
+            region=region,
+            maxPixels=1e8
+        )
+        task.start()
+        
+        print(f"Exporting {lake_name} Lake - {year} ...")
 
-task_new = ee.batch.Export.image.toDrive(
-    image=image_new,
-    description='bellandur_lake_2024',
-    folder='bellandur_data',
-    scale=10,
-    region=region,
-    maxPixels=1e8
-)
-task_new.start()
-print("Exporting 2024 Bellandur image...")
-
-print("Tasks submitted! Check your Google Drive 'bellandur_data' folder in a few minutes.")
+print("\nAll tasks submitted successfully!")
+print("Go to your Google Drive → 'multi_lake_data' folder and download the .tif files.")
