@@ -93,7 +93,7 @@ Lake-area-variation-analysis/
 
 ## NDWI Calculation
 
-![Equation](lake_area_variation_analysis\equation.png)
+![Equation](lake_area_variation_analysis/equation.png)
 
 - **Green** = Band 3  
 - **NIR** = Band 8  
