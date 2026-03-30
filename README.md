@@ -46,7 +46,7 @@ Using **Google Earth Engine**, **Sentinel-2 imagery**, and the **Normalized Diff
 ## Project Structure
 
 ```bash
-Overhead-Satellite-Drone-Image-Analysis/
+Lake-area-variation-analysis/
 ├── data/
 │   ├── 2018_renders/
 │   │   ├── bellandur_lake_2018_render.jpg
@@ -87,6 +87,7 @@ Overhead-Satellite-Drone-Image-Analysis/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+```
 ---
 
 ## NDWI Calculation
