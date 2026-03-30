@@ -69,6 +69,9 @@ lake_area_variation_analysis/
 │   ├── Lakes_2018_renders.png
 │   └── Lakes_2024_renders.png
 ├── results/
+|   ├──compute.py
+|   ├── graph.py
+|   ├──tablevalues.py
 │   ├── lake_area_comparison_graph_final.png
 │   ├── lake_water_masks_comparison.jpg
 │   ├── Result_data2.png
@@ -81,10 +84,7 @@ lake_area_variation_analysis/
 │   ├── 2024lake.py
 │   ├── filesavelake2018.py
 │   └── filesavelake2024.py
-├── compute.py
 ├── equation.png
-├── graph.py
-├── tablevalues.py
 ├── requirements.txt
 ├── README.md
 └── .gitignore
