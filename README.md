@@ -2,7 +2,7 @@
 
 **Author:** Pranav Prayaga  
 **Internship:** IDEAS @ Indian Statistical Institute, Kolkata (Spring 2026)  
-**Branch:** `lake-area-change-analysis` (Individual Contribution)  
+**Branch:** `lake_area_variation_analysis` (Individual Contribution)  
 **Project Type:** Standalone Chapter for Group Repository
 
 ---
